@@ -1,0 +1,584 @@
+openapi: "3.0.0"
+info:
+  description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
+  version: "1.0.0"
+  title: "elearnio User Management API"
+  contact:
+    email: "development@elearnio.com"
+servers:
+  - url: http://elearnio.net/user-api/v1
+    description: "production server"
+  - url: http://beta.elearnio.net/user-api/v1
+    description: "staging server for testing"
+security:
+  - credAuth: []
+tags:
+- name: "member"
+  description: "Set of endpoints to manage the “member” object in elearnio."
+- name: "group"
+  description: "Set of endpoints to manage the “group” object in elearnio."
+paths:
+  /members:
+    get:
+      tags:
+      - "member"
+      summary: "returns all members"
+      description: "Example request params: /members?filter[role]=talent&filter[group_id]=1&page[size]=50&page[number]=3"
+      parameters:
+        - $ref: '#/components/parameters/filterParam'
+        - $ref: '#/components/parameters/pageNumberParam'
+        - $ref: '#/components/parameters/pageSizeParam'
+      responses:
+        '200':
+          $ref: "#/components/responses/MemberListResponse"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      tags:
+      - "member"
+      summary: "creates a member"
+      requestBody:
+        description: "Created new member object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberCreatePayload"
+              #required: how to define that email and role are required
+      responses:
+        '200':
+          $ref: '#/components/responses/MemberResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /members/{id}:
+    parameters:
+      - $ref: '#/components/parameters/memberID'
+    get:
+      tags:
+      -  "member"
+      summary: "returns a member by id"
+      description: ""
+      
+      responses:
+        '200':
+          $ref: '#/components/responses/MemberResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    patch:
+      tags:
+      - "member"
+      summary: "updates a member by id"
+      description: ""
+      requestBody:
+        description: "Updated member object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemberUpdatePayload"
+      responses:
+        '200':
+          $ref: '#/components/responses/MemberResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      tags:
+      - "member"
+      summary: "deletes a member by id"
+      description: ""
+      responses:
+        '200':
+          $ref: '#/components/responses/DeletionSuccess'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /groups:
+    get:
+      tags:
+      - "group"
+      summary: "returns all groups"
+      description: "Example request params: /groups?filter[external_id]=123"
+      parameters:
+        - $ref: "#/components/parameters/filterParam"
+      responses:
+        '200':
+          $ref: "#/components/responses/GroupListResponse"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      tags:
+      - "group"
+      summary: "creates a group"
+      requestBody:
+        description: "Created new group object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupCreatePayload"
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupCreateSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /groups/{id}:
+    parameters:
+      - $ref: '#/components/parameters/groupID'
+    get:
+      tags:
+      -  "group"
+      summary: "returns a group by id"
+      description: ""
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    patch:
+      tags:
+      - "group"
+      summary: "updates a group by id"
+      description: ""
+      requestBody:
+        description: "Updated group object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupCreatePayload"
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      tags:
+      - "group"
+      summary: "delete group by ID"
+      description: ""
+      responses:
+        '200':
+          $ref: '#/components/responses/DeletionSuccess'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  securitySchemes:
+    credAuth:
+      type: oauth2
+      description: "TBD"
+      flows: 
+        clientCredentials:
+          tokenUrl: "TBD"
+          scopes: {}
+  parameters:
+    groupID:
+      name: id
+      in: path
+      description: "ID of the group"
+      required: true
+      schema:
+        type: integer
+    memberID:
+      name: id
+      in: path
+      description: "ID of the member"
+      required: true
+      schema:
+        type: integer
+    pageNumberParam:
+      name: Page Number
+      in: query
+      description: "Page number used on pagination, example 'page[number]=2'"
+      schema:
+          type: integer
+    pageSizeParam:
+      name: Page Size
+      in: query
+      description: "Number of records per page, example 'page[size]=30'"
+      schema:
+        type: integer
+    filterParam:
+      name: filter
+      in: query
+      description: "Filter option to get results"
+      schema:
+        type: string
+  responses:
+    MemberListResponse:
+      description: Member list response 
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/MemberList"
+              - $ref: '#/components/schemas/MetaData'
+              - $ref: '#/components/schemas/Success'
+    MemberResponse:
+      description: Member response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/Member"
+              - $ref: '#/components/schemas/Success'
+    GroupListResponse:
+      description: Group list response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/GroupList"
+              - $ref: '#/components/schemas/Success'
+    GroupResponse:
+      description: Group response
+      content:
+        application/json:
+          schema:
+            allOf:
+             - $ref: "#/components/schemas/Group"
+             - $ref: '#/components/schemas/Success'
+    GroupCreateSuccess:
+      description: Group Create successful
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Group'
+              - $ref: '#/components/schemas/Success'
+    DeletionSuccess:
+      description: Delete successful
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+    BadRequest:
+      description: Request contained invalid data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorJsonApi'
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorJsonApi'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorJsonApi'
+    InternalError:
+      description: An internal error ocurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorJsonApi'
+  schemas:
+    MemberId:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+    MemberNonUpdatableParams:
+      type: object
+      required:
+        - email
+        - role
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum:
+            - "member"
+            - "global_coach"
+            - "global_manager"
+            - "company_admin"
+            - "ghost_watcher"
+    MemberOptionalParams:
+      type: object
+      properties:
+        birth_date:
+          type: string
+          example: '1980-01-31'
+          format: date
+          description:  "Member birth date. Format: yyyy-mm-dd"
+          pattern: ^\d{4}-\d{2}-\d{2}$
+        department:
+          type: string
+        employee_id:
+          type: string
+        first_name:
+          type: string
+        full_name:
+          type: string
+        gender:
+          type: string
+          enum:
+            - "male"
+            - "female"
+            - "diverse"
+        language:
+          type: string
+        last_name:
+          type: string
+        linked_in:
+          type: string
+        manager:
+          type: string
+        office_location:
+          type: string
+        other_profile:
+          type: string
+        phone:
+          type: string
+          format: number
+        position:
+          type: string
+        team:
+          type: string
+        status:
+          type: string
+          enum:
+            - "active"
+            - "inactive"
+        time_format:
+          type: string
+          enum:
+            - "12h"
+            - "24h"
+        time_zone:
+          type: string
+          description: "The users timezone. Adheres to the tz database format"
+        groups:
+          type: array
+          description: "external ID of the groups the member is part of"
+          items: 
+            type: string
+    GroupId:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 0
+    GroupCreateRequiredParams:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "group name"
+    GroupOptionalParams:
+      type: object
+      properties:
+        external_id:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - 'public'
+            - 'private'
+        members:
+          type: array
+          description: "Email address of members in the group"
+          items: 
+            type: string
+            format: email
+        leaders:
+          type: array
+          description: "Email address of leaders of the group"
+          items: 
+            type: string
+            format: email
+    MemberTimestamps:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+    GroupTimestamps:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    MetaData:
+      type: object
+      properties:
+        record_count:
+          description: "Total number of records"
+          type: integer
+        page_count:
+          description: "Total number of pages available"
+          type: integer
+    MemberCreatePayload:
+     type: object
+     properties:
+      data:
+        type: object
+        required:
+          - type
+        properties:
+          type:
+            type: string
+            example: 'members'
+          attributes:
+            allOf:
+              - $ref: "#/components/schemas/MemberNonUpdatableParams"
+              - $ref: "#/components/schemas/MemberOptionalParams"
+    MemberUpdatePayload:
+     type: object
+     properties:
+      data:
+        type: object
+        required:
+          - type
+        properties:
+          type:
+            type: string
+            example: 'members'
+          attributes:
+            allOf:
+              - $ref: "#/components/schemas/MemberOptionalParams"
+    MemberList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberShowResponse"
+    Member:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/MemberShowResponse"
+    MemberShowResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/MemberId"
+        - $ref: "#/components/schemas/MemberNonUpdatableParams"
+        - $ref: "#/components/schemas/MemberOptionalParams"
+        - $ref: "#/components/schemas/MemberTimestamps"
+    GroupCreatePayload:
+      type: object
+      properties:
+        data:
+          type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              example: 'groups'
+            attributes:
+              $ref: "#/components/schemas/GroupCreateAttributes"
+    GroupCreateAttributes:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/GroupCreateRequiredParams"
+        - $ref: "#/components/schemas/GroupOptionalParams"
+    GroupList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupShowResponse"
+    Group:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/GroupShowResponse"
+    GroupShowResponse:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/GroupId"
+        - $ref: "#/components/schemas/GroupCreateRequiredParams"
+        - $ref: "#/components/schemas/GroupOptionalParams"
+        - $ref: "#/components/schemas/GroupTimestamps"
+    Success:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: "status code of response"
+          example: 200
+        title:
+          type: string
+          description: "name of status"
+          example: "OK"
+    ErrorJsonApi:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorObject"
+    ErrorObject:
+      type: object
+      properties:
+        code:
+          type: string
+          description: "http status code as string"
+        detail:
+          type: string
+          description: "URL of request"
+        meta:
+         type: object
+        status:
+          type: integer
+          description: "http status code as integer"
+        title:
+          type: string
+          description: "name of the status (Bad Request, Not Found, etc.)"
