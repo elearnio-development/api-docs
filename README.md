@@ -17,7 +17,7 @@ Supported filter:
 * group.id
 
 Additional notes:
-* member.groups[] accepts group.externalID
+* member.groups[] accepts group.external_id
 
 ### patch /members
 
