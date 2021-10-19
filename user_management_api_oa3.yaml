@@ -1,14 +1,14 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.0"
+  version: "1.0.1"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
 servers:
-  - url: http://elearnio.net/user-api/v1
+  - url: https://elearnio.net/user-api/v1
     description: "production server"
-  - url: http://beta.elearnio.net/user-api/v1
+  - url: https://beta.elearnio.net/user-api/v1
     description: "staging server for testing"
 security:
   - credAuth: []
@@ -43,10 +43,9 @@ paths:
         description: "Created new member object"
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               $ref: "#/components/schemas/MemberCreatePayload"
-              #required: how to define that email and role are required
       responses:
         '200':
           $ref: '#/components/responses/MemberResponse'
@@ -83,7 +82,7 @@ paths:
         description: "Updated member object"
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               $ref: "#/components/schemas/MemberUpdatePayload"
       responses:
@@ -134,7 +133,7 @@ paths:
         description: "Created new group object"
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               $ref: "#/components/schemas/GroupCreatePayload"
       responses:
@@ -172,7 +171,7 @@ paths:
         description: "Updated group object"
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               $ref: "#/components/schemas/GroupCreatePayload"
       responses:
@@ -202,10 +201,10 @@ components:
   securitySchemes:
     credAuth:
       type: oauth2
-      description: "TBD"
+      description: "Token URL is relative to server URL https://[domain]"
       flows: 
         clientCredentials:
-          tokenUrl: "TBD"
+          tokenUrl: /oauth/token
           scopes: {}
   parameters:
     groupID:
@@ -244,81 +243,70 @@ components:
     MemberListResponse:
       description: Member list response 
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             allOf:
               - $ref: "#/components/schemas/MemberList"
-              - $ref: '#/components/schemas/MetaData'
-              - $ref: '#/components/schemas/Success'
+              - $ref: '#/components/schemas/Meta'
     MemberResponse:
       description: Member response
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             allOf:
               - $ref: "#/components/schemas/Member"
-              - $ref: '#/components/schemas/Success'
     GroupListResponse:
       description: Group list response
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             allOf:
               - $ref: "#/components/schemas/GroupList"
-              - $ref: '#/components/schemas/Success'
     GroupResponse:
       description: Group response
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             allOf:
              - $ref: "#/components/schemas/Group"
-             - $ref: '#/components/schemas/Success'
     GroupCreateSuccess:
       description: Group Create successful
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             allOf:
               - $ref: '#/components/schemas/Group'
-              - $ref: '#/components/schemas/Success'
     DeletionSuccess:
       description: Delete successful
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             $ref: '#/components/schemas/Success'
     BadRequest:
       description: Request contained invalid data
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             $ref: '#/components/schemas/ErrorJsonApi'
     NotFound:
       description: The specified resource was not found
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             $ref: '#/components/schemas/ErrorJsonApi'
     Unauthorized:
       description: Unauthorized
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             $ref: '#/components/schemas/ErrorJsonApi'
     InternalError:
       description: An internal error ocurred
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             $ref: '#/components/schemas/ErrorJsonApi'
   schemas:
-    MemberId:
-      type: object
-      properties:
-        id:
-          type: integer
-          minimum: 0
     MemberNonUpdatableParams:
       type: object
       required:
@@ -380,14 +368,18 @@ components:
           type: string
         status:
           type: string
+          description: "default is active"
           enum:
             - "active"
             - "inactive"
+          example: "active"
         time_format:
           type: string
+          description: "default is 24h"
           enum:
             - "12h"
             - "24h"
+          example: "24h"
         time_zone:
           type: string
           description: "The users timezone. Adheres to the tz database format"
@@ -396,12 +388,6 @@ components:
           description: "external ID of the groups the member is part of"
           items: 
             type: string
-    GroupId:
-      type: object
-      properties:
-        id:
-          type: integer
-          minimum: 0
     GroupCreateRequiredParams:
       type: object
       required:
@@ -417,9 +403,11 @@ components:
           type: string
         visibility:
           type: string
+          description: "Default is public"
           enum:
             - 'public'
             - 'private'
+          example: "public"
         members:
           type: array
           description: "Email address of members in the group"
@@ -444,6 +432,9 @@ components:
         last_login:
           type: string
           format: date-time
+        last_activity:
+          type: string
+          format: date-time
     GroupTimestamps:
       type: object
       properties:
@@ -453,15 +444,18 @@ components:
         updated_at:
           type: string
           format: date-time
-    MetaData:
+    Meta:
       type: object
       properties:
-        record_count:
-          description: "Total number of records"
-          type: integer
-        page_count:
-          description: "Total number of pages available"
-          type: integer
+        meta:
+          type: object
+          properties:
+            record_count:
+              description: "Total number of records"
+              type: integer
+            page_count:
+              description: "Total number of pages available"
+              type: integer
     MemberCreatePayload:
      type: object
      properties:
@@ -505,11 +499,17 @@ components:
           $ref: "#/components/schemas/MemberShowResponse"
     MemberShowResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/MemberId"
-        - $ref: "#/components/schemas/MemberNonUpdatableParams"
-        - $ref: "#/components/schemas/MemberOptionalParams"
-        - $ref: "#/components/schemas/MemberTimestamps"
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          example: members
+        attributes:
+          allOf:
+          - $ref: "#/components/schemas/MemberNonUpdatableParams"
+          - $ref: "#/components/schemas/MemberOptionalParams"
+          - $ref: "#/components/schemas/MemberTimestamps"
     GroupCreatePayload:
       type: object
       properties:
@@ -542,11 +542,17 @@ components:
           $ref: "#/components/schemas/GroupShowResponse"
     GroupShowResponse:
       type: object
-      allOf:
-        - $ref: "#/components/schemas/GroupId"
-        - $ref: "#/components/schemas/GroupCreateRequiredParams"
-        - $ref: "#/components/schemas/GroupOptionalParams"
-        - $ref: "#/components/schemas/GroupTimestamps"
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          example: groups
+        attributes:
+          allOf:
+          - $ref: "#/components/schemas/GroupCreateRequiredParams"
+          - $ref: "#/components/schemas/GroupOptionalParams"
+          - $ref: "#/components/schemas/GroupTimestamps"
     Success:
       type: object
       properties:
@@ -561,7 +567,7 @@ components:
     ErrorJsonApi:
       type: object
       properties:
-        data:
+        errors:
           type: array
           items:
             $ref: "#/components/schemas/ErrorObject"
