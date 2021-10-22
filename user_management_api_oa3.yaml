@@ -1,14 +1,14 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.1"
+  version: "1.0.2"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
 servers:
-  - url: https://elearnio.net/user-api/v1
+  - url: https://elearnio.net/backend/user-api/v1
     description: "production server"
-  - url: https://beta.elearnio.net/user-api/v1
+  - url: https://beta.elearnio.net/backend/user-api/v1
     description: "staging server for testing"
 security:
   - credAuth: []
@@ -100,8 +100,8 @@ paths:
       summary: "deletes a member by id"
       description: ""
       responses:
-        '200':
-          $ref: '#/components/responses/DeletionSuccess'
+        '204':
+          description: The resource was deleted successfully.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -189,8 +189,8 @@ paths:
       summary: "delete group by ID"
       description: ""
       responses:
-        '200':
-          $ref: '#/components/responses/DeletionSuccess'
+        '204':
+          description: The resource was deleted successfully.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -276,12 +276,6 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/Group'
-    DeletionSuccess:
-      description: Delete successful
-      content:
-        application/vnd.api+json:
-          schema:
-            $ref: '#/components/schemas/Success'
     BadRequest:
       description: Request contained invalid data
       content:
@@ -408,13 +402,13 @@ components:
             - 'public'
             - 'private'
           example: "public"
-        members:
+        member_emails:
           type: array
           description: "Email address of members in the group"
           items: 
             type: string
             format: email
-        leaders:
+        leader_emails:
           type: array
           description: "Email address of leaders of the group"
           items: 
@@ -433,6 +427,9 @@ components:
           type: string
           format: date-time
         last_activity:
+          type: string
+          format: date-time
+        started_at:
           type: string
           format: date-time
     GroupTimestamps:
@@ -553,17 +550,6 @@ components:
           - $ref: "#/components/schemas/GroupCreateRequiredParams"
           - $ref: "#/components/schemas/GroupOptionalParams"
           - $ref: "#/components/schemas/GroupTimestamps"
-    Success:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: "status code of response"
-          example: 200
-        title:
-          type: string
-          description: "name of status"
-          example: "OK"
     ErrorJsonApi:
       type: object
       properties:
