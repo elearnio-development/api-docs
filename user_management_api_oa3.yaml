@@ -47,7 +47,7 @@ paths:
             schema:
               $ref: "#/components/schemas/MemberCreatePayload"
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/MemberResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -137,7 +137,7 @@ paths:
             schema:
               $ref: "#/components/schemas/GroupCreatePayload"
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/GroupCreateSuccess'
         '400':
           $ref: '#/components/responses/BadRequest'
