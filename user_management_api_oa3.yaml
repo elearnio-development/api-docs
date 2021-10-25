@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.2"
+  version: "1.0.3"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
@@ -10,8 +10,8 @@ servers:
     description: "production server"
   - url: https://beta.elearnio.net/backend/user-api/v1
     description: "staging server for testing"
-security:
-  - credAuth: []
+#security:
+#  - credAuth: []
 tags:
 - name: "member"
   description: "Set of endpoints to manage the “member” object in elearnio."
@@ -25,6 +25,7 @@ paths:
       summary: "returns all members"
       description: "Example request params: /members?filter[role]=talent&filter[group_id]=1&page[size]=50&page[number]=3"
       parameters:
+        - $ref: '#/components/parameters/UserApiKey'
         - $ref: '#/components/parameters/filterParam'
         - $ref: '#/components/parameters/pageNumberParam'
         - $ref: '#/components/parameters/pageSizeParam'
@@ -39,6 +40,8 @@ paths:
       tags:
       - "member"
       summary: "creates a member"
+      parameters:
+        - $ref: '#/components/parameters/UserApiKey'
       requestBody:
         description: "Created new member object"
         required: true
@@ -57,13 +60,13 @@ paths:
           $ref: '#/components/responses/InternalError'
   /members/{id}:
     parameters:
+      - $ref: '#/components/parameters/UserApiKey'
       - $ref: '#/components/parameters/memberID'
     get:
       tags:
       -  "member"
       summary: "returns a member by id"
       description: ""
-      
       responses:
         '200':
           $ref: '#/components/responses/MemberResponse'
@@ -115,6 +118,7 @@ paths:
       summary: "returns all groups"
       description: "Example request params: /groups?filter[external_id]=123"
       parameters:
+        - $ref: '#/components/parameters/UserApiKey'
         - $ref: "#/components/parameters/filterParam"
       responses:
         '200':
@@ -129,6 +133,8 @@ paths:
       tags:
       - "group"
       summary: "creates a group"
+      parameters:
+        - $ref: '#/components/parameters/UserApiKey'
       requestBody:
         description: "Created new group object"
         required: true
@@ -137,7 +143,7 @@ paths:
             schema:
               $ref: "#/components/schemas/GroupCreatePayload"
       responses:
-        '201':
+        '200':
           $ref: '#/components/responses/GroupCreateSuccess'
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -147,6 +153,7 @@ paths:
           $ref: '#/components/responses/InternalError'
   /groups/{id}:
     parameters:
+      - $ref: '#/components/parameters/UserApiKey'
       - $ref: '#/components/parameters/groupID'
     get:
       tags:
@@ -198,15 +205,22 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 components:
-  securitySchemes:
-    credAuth:
-      type: oauth2
-      description: "Token URL is relative to server URL https://[domain]"
-      flows: 
-        clientCredentials:
-          tokenUrl: /oauth/token
-          scopes: {}
+#  securitySchemes:
+#    credAuth:
+#      type: oauth2
+#      description: "Token URL is relative to server URL https://[domain]"
+#      flows: 
+#        clientCredentials:
+#          tokenUrl: /oauth/token
+#          scopes: {}
   parameters:
+    UserApiKey:
+      name: User-Api-Key
+      in: header
+      description: "access key for user management API"
+      required: true
+      schema:
+        type: string
     groupID:
       name: id
       in: path
@@ -313,7 +327,7 @@ components:
         role:
           type: string
           enum:
-            - "member"
+            - "talent"
             - "global_coach"
             - "global_manager"
             - "company_admin"
@@ -396,12 +410,8 @@ components:
         external_id:
           type: string
         visibility:
-          type: string
-          description: "Default is public"
-          enum:
-            - 'public'
-            - 'private'
-          example: "public"
+          type: boolean
+          description: "Visibility of the group - true refers to public, false refers to private. Defaults to 'true'"
         member_emails:
           type: array
           description: "Email address of members in the group"
