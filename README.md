@@ -3,21 +3,21 @@
 
 ### authentication
 
-to be discussed
+* header param: user_api_key
 
 ### get /members
 
 Supported filter:
 * role
-* fullname
-* member.id
+* full_name
+* id (of member)
 * email
 * employee_id
-* group.external_id
-* group.id
+* external_id (of group)
+* group_id (of group)
 
 Additional notes:
-* member.groups[] accepts group.external_id
+* member.groups[] accepts external_id (of group)
 
 ### patch /members
 
@@ -34,4 +34,3 @@ Supported filter:
 * id
 * name
 * external_id
-
