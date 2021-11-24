@@ -13,6 +13,7 @@ Supported filter:
 * id (of member)
 * email
 * employee_id
+* last_login (use "none" for non active members)
 * external_id (of group)
 * group_id (of group)
 
