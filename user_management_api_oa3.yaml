@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.3"
+  version: "1.0.4"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
@@ -48,7 +48,9 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              $ref: "#/components/schemas/MemberCreatePayload"
+              allOf:
+              - $ref: "#/components/schemas/MemberCreatePayload"
+              - $ref: "#/components/schemas/emailPreferences"
       responses:
         '201':
           $ref: '#/components/responses/MemberResponse'
@@ -87,7 +89,9 @@ paths:
         content:
           application/vnd.api+json:
             schema:
-              $ref: "#/components/schemas/MemberUpdatePayload"
+              allOf:
+                - $ref: "#/components/schemas/MemberUpdatePayload"
+                - $ref: "#/components/schemas/emailPreferences"
       responses:
         '200':
           $ref: '#/components/responses/MemberResponse'
@@ -224,10 +228,10 @@ components:
     groupID:
       name: id
       in: path
-      description: "ID of the group"
+      description: "external ID of the group"
       required: true
       schema:
-        type: integer
+        type: string
     memberID:
       name: id
       in: path
@@ -315,6 +319,15 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorJsonApi'
   schemas:
+    emailPreferences:
+      type: object
+      properties:
+        member_invite:
+          description: flag to enable sending of member invitation mails. optional, if missing default is true
+          type: boolean
+        course_invite:
+          description: flag to enable sending of course invitation mails. optional, if missing default is true
+          type: boolean
     MemberNonUpdatableParams:
       type: object
       required:
