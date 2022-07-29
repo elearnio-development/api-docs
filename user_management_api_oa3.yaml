@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.4"
+  version: "1.0.5"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
@@ -344,7 +344,7 @@ components:
             - "global_coach"
             - "global_manager"
             - "company_admin"
-            - "ghost_watcher"
+            - "author"
     MemberOptionalParams:
       type: object
       properties:
@@ -368,6 +368,7 @@ components:
             - "male"
             - "female"
             - "diverse"
+            - "undefined"
         language:
           type: string
         last_name:
