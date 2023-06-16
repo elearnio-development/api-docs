@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.6"
+  version: "1.0.7"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
