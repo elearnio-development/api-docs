@@ -213,7 +213,7 @@ components:
 #    credAuth:
 #      type: oauth2
 #      description: "Token URL is relative to server URL https://[domain]"
-#      flows: 
+#      flows:
 #        clientCredentials:
 #          tokenUrl: /oauth/token
 #          scopes: {}
@@ -259,7 +259,7 @@ components:
         type: string
   responses:
     MemberListResponse:
-      description: Member list response 
+      description: Member list response
       content:
         application/vnd.api+json:
           schema:
@@ -354,6 +354,14 @@ components:
           format: date
           description:  "Member birth date. Format: yyyy-mm-dd"
           pattern: ^\d{4}-\d{2}-\d{2}$
+        company:
+          type: string
+          example: 'elearnio GmbH'
+          description:  "Company or subcompany of member"
+        customer_code:
+          type: string
+        customer_number:
+            type: integer
         hire_date:
           type: string
           example: '1980-01-31'
@@ -392,7 +400,12 @@ components:
           format: number
         position:
           type: string
+        reporting_feedback_permission:
+          type: boolean
+          description: "enables access to feedback reports"
         team:
+          type: string
+        salutation:
           type: string
         status:
           type: string
@@ -400,6 +413,9 @@ components:
           enum:
             - "active"
             - "inactive"
+            - "preboarding"
+            - "onboarding"
+            - "leave"
           example: "active"
         time_format:
           type: string
@@ -414,7 +430,7 @@ components:
         groups:
           type: array
           description: "external ID of the groups the member is part of"
-          items: 
+          items:
             type: string
     GroupCreateRequiredParams:
       type: object
@@ -435,13 +451,13 @@ components:
         member_emails:
           type: array
           description: "Email address of members in the group"
-          items: 
+          items:
             type: string
             format: email
         leader_emails:
           type: array
           description: "Email address of leaders of the group"
-          items: 
+          items:
             type: string
             format: email
     MemberTimestamps:
