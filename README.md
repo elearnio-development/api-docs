@@ -20,10 +20,15 @@ Supported filter:
 Additional notes:
 * member.groups[] accepts external_id (of group)
 
+### post /members
+
+v1 does require at least one of the following member attributes:
+* email
+* username
+
 ### patch /members
 
 v1 does not allow an update of:
-* email
 * role
 
 Additional notes:
