@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   description: "This document describes the endpoint functionality for an application programming interface (API) to manage users in the elearnio platform. "
-  version: "1.0.7"
+  version: "1.0.8"
   title: "elearnio User Management API"
   contact:
     email: "development@elearnio.com"
@@ -331,12 +331,8 @@ components:
     MemberNonUpdatableParams:
       type: object
       required:
-        - email
         - role
       properties:
-        email:
-          type: string
-          format: email
         role:
           type: string
           enum:
@@ -354,22 +350,27 @@ components:
           format: date
           description:  "Member birth date. Format: yyyy-mm-dd"
           pattern: ^\d{4}-\d{2}-\d{2}$
+        business_unit:
+          type: string
         company:
           type: string
           example: 'elearnio GmbH'
           description:  "Company or subcompany of member"
+        custom_field_one:
+          type: string
+        custom_field_two:
+          type: string
         customer_code:
           type: string
         customer_number:
             type: integer
-        hire_date:
-          type: string
-          example: '1980-01-31'
-          format: date
-          description:  "Member hire date. Format: yyyy-mm-dd"
-          pattern: ^\d{4}-\d{2}-\d{2}$
         department:
           type: string
+        division:
+          type: string
+        email:
+          type: string
+          format: email
         employee_id:
           type: string
         first_name:
@@ -383,6 +384,12 @@ components:
             - "female"
             - "diverse"
             - "undefined"
+        hire_date:
+          type: string
+          example: '1980-01-31'
+          format: date
+          description:  "Member hire date. Format: yyyy-mm-dd"
+          pattern: ^\d{4}-\d{2}-\d{2}$
         language:
           type: string
         last_name:
@@ -427,6 +434,8 @@ components:
         time_zone:
           type: string
           description: "The users timezone. Adheres to the tz database format"
+        username:
+          type: string
         groups:
           type: array
           description: "external ID of the groups the member is part of"
